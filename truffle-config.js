@@ -18,10 +18,11 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+// const infuraKey = "fj4jll3k.....";
 //
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+
+const keythereum = require("keythereum");
 
 module.exports = {
   /**
@@ -71,46 +72,101 @@ module.exports = {
     // network_id: 2111,   // This network is yours, in the cloud.
     // production: true    // Treats this network as if it was a public net. (default: false)
     // }
+    local: {
+      host: '127.0.0.1',
+      mnemonic:"skill level pulse dune pattern rival used syrup inner first balance sad",
+      network_id: '*',
+      port: 8545,
+      gasPrice: 1000000000,
+      skipDryRun:true,
+    },
+    coverage: {
+      host: '127.0.0.1',
+      mnemonic:"skill level pulse dune pattern rival used syrup inner first balance sad",
+      network_id: '*',
+      port: 5545,
+      gasPrice: 1000000000,
+      skipDryRun:true,
+    },
+    testnet: {
+      provider: ()=>new HDWalletProvider("skill level pulse dune pattern rival used syrup inner first balance sad", "https://gwan-ssl.wandevs.org:46891", 0, 100),
+      network_id: "999",
+      skipDryRun: true,
+      gas: 1e7,
+      gasPrice: 3e9
+    },
+    movr_test: {
+      provider: ()=>{
+        // const passwd = process.env.PASSWD
+        // const keystore = require('fs').readFileSync(__dirname+'/Deployer00.key').toString();
+        // const keyObject = JSON.parse(keystore)
+        // const privateKey = keythereum.recover(passwd, keyObject);
+        // return new HDWalletProvider('0x'+privateKey.toString('hex'), "https://rpc.testnet.moonbeam.network")
+        return  new HDWalletProvider("skill level pulse dune pattern rival used syrup inner first balance sad", "https://rpc.testnet.moonbeam.network", 0, 100);
+      },
+      //()=>new HDWalletProvider("skill level pulse dune pattern rival used syrup inner first balance sad", "https://rpc.testnet.moonbeam.network", 0, 100),
+      network_id: "1287",
+      skipDryRun: true,
+      // gas: 1e7,
+      gasPrice: 8e9
+    },
+    movr_mainnet: {
+      provider: ()=>{
+        const passwd = process.env.PASSWD
+        const keystore = require('fs').readFileSync(process.env.HOME+'/.keystore').toString();
+        const keyObject = JSON.parse(keystore)
+        const privateKey = keythereum.recover(passwd, keyObject);
+        return new HDWalletProvider('0x'+privateKey.toString('hex'), "https://rpc.testnet.moonbeam.network")
+      },
+      //()=>new HDWalletProvider("skill level pulse dune pattern rival used syrup inner first balance sad", "https://rpc.testnet.moonbeam.network", 0, 100),
+      network_id: "1287",
+      skipDryRun: true,
+      // gas: 1e7,
+      // gasPrice: 1e9
+    },
+    mainnet: {
+      provider:  ()=>{
+        //let wallet = await Wallet.default.fromV3(keystore, passwd);
+        //return  new HDWalletProvider('0x'+wallet.privateKey.toString('hex'), "https://gwan-ssl.wandevs.org:56891");
+        return  new HDWalletProvider("skill level pulse dune pattern rival used syrup inner first balance sad", "https://gwan-ssl.wandevs.org:56891");
+      },
+      network_id: "888",
+      skipDryRun: true,
+      gas: 1e7,
+      gasPrice: 1e9
+    },
   },
 
   // Set default mocha options here, use special reporters etc.
   mocha: {
     // timeout: 100000
   },
-
+  plugins: [
+    "solidity-coverage",
+    "truffle-plugin-verify"
+  ], 
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.11",    // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.2",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-      // settings: {          // See the solidity docs for advice about optimization and evmVersion
-      //  optimizer: {
-      //    enabled: false,
-      //    runs: 200
-      //  },
-      //  evmVersion: "byzantium"
-      // }
+      settings: {          // See the solidity docs for advice about optimization and evmVersion
+        optimizer: {
+          enabled: false,
+          runs: 200
+        },
+        evmVersion: "byzantium"
+       }
     }
   },
 
-  // Truffle DB is currently disabled by default; to enable it, change enabled:
-  // false to enabled: true. The default storage location can also be
-  // overridden by specifying the adapter settings, as shown in the commented code below.
+  // Truffle DB is currently disabled by default; to enable it, change enabled: false to enabled: true
   //
-  // NOTE: It is not possible to migrate your contracts to truffle DB and you should
-  // make a backup of your artifacts to a safe location before enabling this feature.
-  //
-  // After you backed up your artifacts you can utilize db by running migrate as follows: 
+  // Note: if you migrated your contracts prior to enabling this field in your Truffle project and want
+  // those previously migrated contracts available in the .db directory, you will need to run the following:
   // $ truffle migrate --reset --compile-all
-  //
-  // db: {
-    // enabled: false,
-    // host: "127.0.0.1",
-    // adapter: {
-    //   name: "sqlite",
-    //   settings: {
-    //     directory: ".db"
-    //   }
-    // }
-  // }
+
+  db: {
+    enabled: false
+  }
 };
